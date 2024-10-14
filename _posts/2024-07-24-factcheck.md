@@ -2,12 +2,14 @@
 title: factcheck
 date: 2024-07-24 +05:20
 author: kliprmimo
+categories: [rev]
+tags: [gdb]
 ---
 
 # Challenge description
-Category: rev
-Difficulty: Medium
-This binary is putting together some important piece of information... Can you uncover that information? Examine this [file](https://artifacts.picoctf.net/c_titan/190/bin). Do you understand its inner workings?
+Category: rev\
+Difficulty: Medium\
+This binary is putting together some important piece of information... Can you uncover that information? Examine this [file](https://artifacts.picoctf.net/c_titan/190/bin). Do you understand its inner workings?\
 # Writeup
 ![](attachments/Pasted%20image%2020240723135320.png)
 when we first load challenge in ida we can see a lot of weird c++ alocators, but there is first part of our flag

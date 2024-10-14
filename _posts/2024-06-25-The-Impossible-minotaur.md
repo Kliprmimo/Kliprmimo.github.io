@@ -2,6 +2,8 @@
 title: The Impossible Minotaur
 date: 2024-06-25 +05:30
 author: kliprmimo
+categories: [rev]
+tags: [gdb, patch]
 ---
 
 
