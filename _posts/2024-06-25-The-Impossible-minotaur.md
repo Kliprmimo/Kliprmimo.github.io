@@ -7,12 +7,12 @@ author: kliprmimo
 
 # The Impossible Minotaur
 ## Intro
-![](attachments_md/ida_1.png)
+![](attachments/ida_1.png)
 
 in order to solve this challenge player must input correct string. This string must match sequence that is the from the beginning of later presented maze.
 The input is later checked in function at the address 0x555555555422
 
-![](attachments_md/ida_2.png)
+![](attachments/ida_2.png)
 
 we are given 4 options to move:
 - E to decrease x
@@ -22,7 +22,7 @@ we are given 4 options to move:
 at least in orientation i chose to follow
 returns 0 if either x or y is less than 0 or if we hit a wall that is decrypted from func from addres 0x55555555538A
 
-![](attachments_md/ida_3.png)
+![](attachments/ida_3.png)
 
 this function decrypts if there is a wall at certain x, y
 we will later use that function to generate maze layout
@@ -30,14 +30,14 @@ function returns 1 if we end up at the end of maze that is at 125, 126
 
 another thing that has to be done in order to complete it is we have to patch the program to always ignore output of this function because it does create wall that separates exit from the rest of the maze
 
-![](attachments_md/ida_4.png)
+![](attachments/ida_4.png)
 
 while one might think that we should just call a function that reveals the flag that is not possible since flag is decrypted using out input.
 ## Actual solve
 to get a maze layout we use gdb and set breakpoint before any other instruction
 in this case i just set breakpoint on puts since it is the first func that executes
 
-![](attachments_md/gdb_1.png)
+![](attachments/gdb_1.png)
 
 after that we can use script that calls function 0x000055555555538A that checks if there is a wall at location x, y
 ```python
@@ -63,7 +63,7 @@ for a in range(matrix_size):
 print(result_matrix)
 ```
 
-![](attachments_md/gdb_2.png)
+![](attachments/gdb_2.png)
 
 what this gives us is a 127x127 2d list with 0 where there is a wall and 1 where there is not
 then we use another python script to turn this maze into actual image
@@ -105,17 +105,17 @@ image.show()
 image.save('maze_2_py.png')
 ```
 output:
-![](attachments_md/maze_1_py.png)
+![](attachments/maze_1_py.png)
 
 we do the same with breakpoint set after program cuts our way which gives us this output:
 
-![](attachments_md/maze_2_py.png)
+![](attachments/maze_2_py.png)
 
 as you can see there is no way to solve this maze without a patch
 we use [Maze Solver (esstudio.site)](https://esstudio.site/maze-solver/)
 to solve maze from picture nr 1 which gives us this output:
 
-![](attachments_md/maze_solved.png)
+![](attachments/maze_solved.png)
 
 now we need a way to translate that to a string that contains directions as written above
 i wrote yet another python script for that
@@ -161,4 +161,4 @@ OCCOOEEOOOOOOCCCCOOEEOOEEOOCCCCCCHHCCHHCCHHHHEEHHEEOOEEEEHHCCHHCCHHCCOOCCCCCCCCC
 ```
 
 after inputting that to patched file we get a flag!
-![](attachments_md/flag.png)
+![](attachments/flag.png)
