@@ -14,7 +14,7 @@ solves: 43\
 point value: 452
 ## Overview
 The file we got is x86_64 binary \
-![](attachments_md/kashi_checksec.png)
+![](attachments/kashi_checksec.png)
 
 it does have very little protections enabled:\
 `Partial RELRO` -  we can overwrite got entries\
@@ -25,23 +25,23 @@ We also are provided libc file
 ## Exploitation plan
 ### Vulnerabilities
 code decompiled by ida:\
-![](attachments_md/kashi_main.png)\
-![](attachments_md/kashi_flag.png)\
+![](attachments/kashi_main.png)\
+![](attachments/kashi_flag.png)\
 there are two vulnerabilities in this code:
 - `printf(s)` - using `printf` on buffer controlled by user is very dangerous, using `%p` `%x` (and many others) we can read values saved in registers `( _RSI, RDX, RCX, R8, R9_)` and on stack. We can also have arbitrary memory write using `%n` modifier.
 - `gets(v4)` - gets function is dangerous function that should never be used. This function takes data to specified buffer with no length checking whatsoever which can lead to buffer overflow
 ### How can this be exploited?
-What is usually required to *typical* ROP attack is some gadgets to set registers to correct values for [execve syscall]([Linux System Call Table for x86 64 · Ryan A. Chapman](https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/)) on `/bin/sh` to get reverse shell. Sadly there are not enough gadgets in vuln binary. Luckily there is plenty of such gadgets in libc. \
+What is usually required to *typical* ROP attack is some gadgets to set registers to correct values for [execve syscall](https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/) on `/bin/sh` to get reverse shell. Sadly there are not enough gadgets in vuln binary. Luckily there is plenty of such gadgets in libc. \
 But in order to use this technique we need to know where in memory is libc loaded.\
 We can use vulnerable `printf` function to find address of some function in libc (lack of Pie does not work here). Using that we can find base address at which libc is loaded at. From there we can use ROPgadget program to generate python script that prepares correct payload for this ROP\
 `ROPgadget --binary libc.so.6 --ropchain`
 ## Exploitation
 
 ### getting libc address
-On we run patched binary in gdb and break on vulnerable `printf` (to patch binary you can use [pwninit]([io12/pwninit: pwninit - automate starting binary exploit challenges](https://github.com/io12/pwninit)) or just patchelf)\
+On we run patched binary in gdb and break on vulnerable `printf` (to patch binary you can use [pwninit](https://github.com/io12/pwninit) or just patchelf)\
 using `%<number>$p` we dump values from registers and stack.\
 for my exploit i used value at `%17$p` which happened to be `0x7ffff7e0924a`\
-![](attachments_md/kashi_gdb_libc.png)\
+![](attachments/kashi_gdb_libc.png)\
 using `vmmap` command we can find base address of libc (locally)\
 thanks to that we can calculate offset that leaked address is at (from the base of libc)\
 `0x2724a=0x7ffff7e0924a-0x7ffff7de2000`\
@@ -186,6 +186,6 @@ if __name__ == "__main__":
 
 ```
 Combining quite lengthy outpout of `ROPgadget` with our calculated libc address we get this exploit, that gives us reverse shell! \
-![](attachments_md/kashi_flag.png)\
+![](attachments/kashi_flag.png)\
 \
 flag: `KashiCTF{did_some_trolling_right_there_3hbM6wHf}`
