@@ -26,7 +26,7 @@ We also are provided libc file
 ### Vulnerabilities
 code decompiled by ida:\
 ![](attachments/kashi_main.png)\
-![](attachments/kashi_flag.png)\
+![](attachments/kashi_troll.png)\
 there are two vulnerabilities in this code:
 - `printf(s)` - using `printf` on buffer controlled by user is very dangerous, using `%p` `%x` (and many others) we can read values saved in registers `( _RSI, RDX, RCX, R8, R9_)` and on stack. We can also have arbitrary memory write using `%n` modifier.
 - `gets(v4)` - gets function is dangerous function that should never be used. This function takes data to specified buffer with no length checking whatsoever which can lead to buffer overflow
